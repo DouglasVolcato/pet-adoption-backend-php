@@ -1,0 +1,36 @@
+version: "2"
+services:
+  webserver:
+    image: pet-adoption-php
+    ports:
+      - "80:80"
+    volumes:
+      - ./app:/var/www/html/
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: db
+      MYSQL_USER: usertest
+      MYSQL_PASSWORD: passwordtest
+      SITE_URL: http://localhost
+      PORT: 80
+      SECRET: 23DRGB2763B
+      CATS_API_TOKEN: CATS23DRGB2763B
+      DOGS_API_TOKEN: DOGS23DRGB2763B
+    networks:
+      - test
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: db
+      MYSQL_USER: usertest
+      MYSQL_PASSWORD: passwordtest
+    ports:
+      - "3306:3306"
+    networks:
+      - test
+
+networks:
+  test:
+    external: true
