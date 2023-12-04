@@ -26,6 +26,9 @@ RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
     service apache2 restart
 
 RUN composer global require phpunit/phpunit
-ENV PATH="${PATH}:/root/.composer/vendor/bin"
+RUN composer global require ramsey/uuid
+RUN composer global require egulias/email-validator
+RUN composer global require guzzlehttp/guzzle
 
+ENV PATH="${PATH}:/root/.composer/vendor/bin"
 EXPOSE ${PORT}
