@@ -2,7 +2,7 @@
 
 use PDO;
 
-class MySqlConnectorSingleton implements DatabaseConnectorInterface
+class MySQLConnectorSingleton implements DatabaseConnectorInterface
 {
     private static $instance;
     private $pdo;
@@ -22,8 +22,10 @@ class MySqlConnectorSingleton implements DatabaseConnectorInterface
         $user = $_ENV['MYSQL_USER'];
         $pass = $_ENV['MYSQL_PASSWORD'];
 
-        $this->pdo = new PDO($dsn, $user, $pass);
-        $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        $this->pdo = new PDO($dsn, $user, $pass, [
+            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+            PDO::ATTR_EMULATE_PREPARES => false,
+        ]);
     }
 
     public function disconnect(): void
@@ -44,5 +46,10 @@ class MySqlConnectorSingleton implements DatabaseConnectorInterface
     public function rollbackTransaction(): void
     {
         $this->pdo->rollBack();
+    }
+
+    public function getPdo(): PDO
+    {
+        return $this->pdo;
     }
 }
