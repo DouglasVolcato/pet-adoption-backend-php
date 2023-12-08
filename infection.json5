@@ -1,0 +1,21 @@
+{
+    "$schema": "vendor/infection/infection/resources/schema.json",
+    "source": {
+        "directories": [
+            "src"
+        ],
+        "excludes": [
+            "{Infrastructure/.*}"
+        ]
+    },
+    "logs": {
+        "html": "infection/coverage.html"
+    },
+    "tmpDir": "tmp",
+    "mutators": {
+        "@default": true,
+        "@function_signature": false,
+        "@cast": false,
+        "@removal": false
+    }
+}
