@@ -1,9 +1,11 @@
 <?php
+
 namespace PetAdoption\infra\databases\mysql\connection;
 
 use PDO;
+use PetAdoption\presentation\protocols\utils\DatabaseConnectorInterface;
 
-class MySQLConnectorSingleton
+class MySQLConnectorSingleton implements DatabaseConnectorInterface
 {
     private static $instance;
     private $pdo;
