@@ -19,9 +19,9 @@ class JwtAdapter implements TokenGeneratorInterface, TokenDecrypterInterface
         return $token;
     }
 
-    public function decryptToken(string $jwt, string $secret): object|null
+    public function decryptToken(string $token, string $secret): object|null
     {
-        $decoded = JWT::decode($jwt, $secret, (object)['algorithms' => ['HS256']]);
-        return (object) $decoded->data;
+        $decoded = JWT::decode($token, $secret, (object)['algorithms' => ['HS256']]);
+        return $decoded;
     }
 }
