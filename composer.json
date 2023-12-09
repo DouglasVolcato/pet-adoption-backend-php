@@ -2,7 +2,8 @@
   "name": "home/test-php",
   "autoload": {
     "psr-4": {
-      "PetAdoption\\": "src/"
+      "PetAdoption\\": "src/",
+      "PetAdoptionTest\\": "tests/"
     }
   },
   "authors": [
@@ -21,8 +22,9 @@
   "require": {
     "egulias/email-validator": "^4.0",
     "guzzlehttp/guzzle": "^7.8",
-    "firebase/php-jwt": "^6.10",
-    "ramsey/uuid": "^4.7"
+    "ramsey/uuid": "^4.7",
+    "fakerphp/faker": "^1.23",
+    "firebase/php-jwt": "^6.10"
   },
   "scripts": {
     "test": "phpunit",
