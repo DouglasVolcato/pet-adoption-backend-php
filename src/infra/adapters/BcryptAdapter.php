@@ -22,7 +22,7 @@ class BcryptAdapter implements PasswordHasherInterface, PasswordHashCheckerInter
         return password_hash($value, $algo, $options);
     }
 
-    private function passwordVerify(string $password, string $hash): bool
+    public function passwordVerify(string $password, string $hash): bool
     {
         return password_verify($password, $hash);
     }
