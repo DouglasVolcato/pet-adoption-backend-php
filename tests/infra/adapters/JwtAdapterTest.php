@@ -30,7 +30,7 @@ class JwtAdapterTest extends TestCase
     /**
      * @covers \PetAdoption\infra\adapters\JwtAdapter::generateToken
      */
-    public function testShouldCallJwtEncodeWithCorrectValues()
+    public function testShouldCallEncodeWithCorrectValues()
     {
         $content = (object)['id' => $this->fakeData->id()];
         $secret = $this->fakeData->word();
@@ -38,12 +38,20 @@ class JwtAdapterTest extends TestCase
         $this->jwtMock->shouldReceive('encode')
             ->once()
             ->with(
-                (array)$content,
-                $secret,
-                'HS256'
+                Mockery::on(function ($arg) use ($content) {
+                    $this->assertEquals((array)$content, $arg);
+                    return true;
+                }),
+                Mockery::on(function ($arg) use ($secret) {
+                    $this->assertEquals($secret, $arg);
+                    return true;
+                }),
+                Mockery::on(function ($arg) use ($secret) {
+                    $this->assertEquals('HS256', $arg);
+                    return true;
+                })
             )->andReturn($this->fakeData->word(12));
         $this->sut->generateToken($content, $secret);
-        $this->assertTrue(true);
     }
 
     /**
@@ -57,7 +65,6 @@ class JwtAdapterTest extends TestCase
         $this->jwtMock->shouldReceive('encode')
             ->andReturn($token);
         $result = $this->sut->generateToken($content, $secret);
-
         $this->assertEquals($token, $result);
     }
 
@@ -68,10 +75,65 @@ class JwtAdapterTest extends TestCase
     {
         $content = (object)['id' => $this->fakeData->id()];
         $secret = $this->fakeData->word();
-
         $this->jwtMock->shouldReceive('encode')
-            ->andThrow(new Exception('Something went wrong'));
+            ->andThrow(new Exception());
         $this->expectException(Exception::class);
         $this->sut->generateToken($content, $secret);
+    }
+
+    /**
+     * @covers \PetAdoption\infra\adapters\JwtAdapter::decryptToken
+     */
+    public function testShouldCallDecodeWithCorrectValues()
+    {
+        $token = $this->fakeData->word();
+        $secret = $this->fakeData->word();
+        $headers = (object)['algorithms' => ['HS256']];
+        $this->jwtMock->shouldReceive('decode')
+            ->once()
+            ->with(
+                Mockery::on(function ($arg) use ($token) {
+                    $this->assertEquals($token, $arg);
+                    return true;
+                }),
+                Mockery::on(function ($arg) use ($secret) {
+                    $this->assertEquals($secret, $arg);
+                    return true;
+                }),
+                Mockery::on(function ($arg) use ($headers) {
+                    $this->assertEquals($headers, $arg);
+                    return true;
+                }),
+            )
+            ->andReturn(null);
+        $this->sut->decryptToken($token, $secret);
+    }
+
+    /**
+     * @covers \PetAdoption\infra\adapters\JwtAdapter::decryptToken
+     */
+    public function testShouldReturnTheDecodedObject()
+    {
+        $token = $this->fakeData->word();
+        $secret = $this->fakeData->word();
+        $result = (object)['id' => $this->fakeData->id()];
+
+        $this->jwtMock->shouldReceive('decode')
+            ->andReturn($result);
+        $output = $this->sut->decryptToken($token, $secret);
+        $this->assertEquals($result, $output);
+    }
+
+    /**
+     * @covers \PetAdoption\infra\adapters\JwtAdapter::decryptToken
+     */
+    public function testShouldThrowIfDecodeThrows()
+    {
+        $token = $this->fakeData->word();
+        $secret = $this->fakeData->word();
+        $this->jwtMock->shouldReceive('decode')
+            ->andThrow(new Exception());
+        $this->expectException(Exception::class);
+        $this->sut->decryptToken($token, $secret);
     }
 }
