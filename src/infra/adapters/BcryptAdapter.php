@@ -7,20 +7,23 @@ use PetAdoption\domain\protocols\utils\PasswordHasherInterface;
 
 class BcryptAdapter implements PasswordHasherInterface, PasswordHashCheckerInterface
 {
-    private $hashSalt;
-
-    public function __construct($hashSalt)
+    public function hash(string $value): string
     {
-        $this->hashSalt = $hashSalt;
+        return $this->passwordHash($value, PASSWORD_BCRYPT, ['cost' => 10]);
     }
 
-    public function hash($value): string
+    public function validate(string $value, string $hashedValue): bool
     {
-        return password_hash($value, PASSWORD_BCRYPT, ['cost' => $this->hashSalt]);
+        return $this->passwordVerify($value, $hashedValue);
     }
 
-    public function validate($value, $hashedValue): bool
+    public function passwordHash(string $value, string|int|null $algo, array $options): string
     {
-        return password_verify($value, $hashedValue);
+        return password_hash($value, $algo, $options);
+    }
+
+    private function passwordVerify(string $password, string $hash): bool
+    {
+        return password_verify($password, $hash);
     }
 }
