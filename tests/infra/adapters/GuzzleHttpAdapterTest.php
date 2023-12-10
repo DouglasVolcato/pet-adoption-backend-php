@@ -36,7 +36,7 @@ class GuzzleHttpAdapterTest extends TestCase
     {
         $this->fakeData = FakeData::getInstance();
         $this->guzzleMock = Mockery::mock(ClientInterface::class);
-        $this->sut = new GuzzleHttpAdapter($this->guzzleMock);
+        $this->sut = new GuzzleHttpAdapter();
         $reflection = new ReflectionProperty(
             GuzzleHttpAdapter::class,
             'httpClient'
@@ -59,6 +59,7 @@ class GuzzleHttpAdapterTest extends TestCase
         $headers = ['key' => $this->fakeData->word()];
         $this->guzzleMock
             ->shouldReceive('get')
+            ->once()
             ->with(
                 Mockery::on(function ($arg) use ($url) {
                     $this->assertEquals($url, $arg);
