@@ -4,10 +4,10 @@ namespace PetAdoptionTest\infra\adapters;
 
 use PetAdoption\infra\adapters\EmailValidationAdapter;
 use Egulias\EmailValidator\Validation\RFCValidation;
-use Exception;
 use PetAdoptionTest\utils\FakeData;
 use Mockery\LegacyMockInterface;
 use PHPUnit\Framework\TestCase;
+use Exception;
 use Mockery;
 
 class EmailValidationAdapterTest extends TestCase
@@ -64,7 +64,8 @@ class EmailValidationAdapterTest extends TestCase
     /**
      * @covers \PetAdoption\infra\adapters\EmailValidationAdapter::isEmail
      */
-    public function testShouldReturnFalseIfEmailValidatorReturnsFalse(){
+    public function testShouldReturnFalseIfEmailValidatorReturnsFalse()
+    {
         $this->emailValidatorMock->shouldReceive('isValid')->andReturn(false);
         $result = $this->sut->isEmail($this->fakeData->email());
         $this->assertFalse($result);
@@ -73,7 +74,8 @@ class EmailValidationAdapterTest extends TestCase
     /**
      * @covers \PetAdoption\infra\adapters\EmailValidationAdapter::isEmail
      */
-    public function testShouldThrowIfEmailValidatorThrows(){
+    public function testShouldThrowIfEmailValidatorThrows()
+    {
         $this->emailValidatorMock->shouldReceive('isValid')->andThrow(new Exception());
         $this->expectException(Exception::class);
         $this->sut->isEmail($this->fakeData->email());
