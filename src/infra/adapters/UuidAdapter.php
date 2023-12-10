@@ -9,6 +9,6 @@ class UuidAdapter implements IdGeneratorInterface
 {
     public function generateId(): string
     {
-        return Uuid::uuid4()->toString();
+        return (string)Uuid::uuid4();
     }
 }
