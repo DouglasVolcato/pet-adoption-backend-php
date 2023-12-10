@@ -34,7 +34,7 @@ class EmailValidationAdapterTest extends TestCase
     public function testShouldCallEmailValidatorWithCorrectValues()
     {
         $email = $this->fakeData->email();
-        $this->emailValidatorMock->shouldReceive('isValid')->with(
+        $this->emailValidatorMock->shouldReceive('isValid')->once()->with(
             Mockery::on(
                 function ($arg) use ($email) {
                     $this->assertEquals($email, $arg);
