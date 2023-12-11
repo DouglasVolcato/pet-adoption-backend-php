@@ -2,15 +2,15 @@
 
 namespace PetAdoption\infra\databases\mysql\repositories;
 
-use PDO;
-use PetAdoption\domain\protocols\entities\PetEntityType;
-use PetAdoption\domain\protocols\enums\PetStatusEnum;
-use PetAdoption\domain\protocols\repositories\pet\CreatePetsRepositoryIntereface;
-use PetAdoption\domain\protocols\repositories\pet\DeleteAllPetsRepositoryIntereface;
-use PetAdoption\domain\protocols\repositories\pet\GetPetsRepositoryInterface;
 use PetAdoption\domain\protocols\repositories\pet\UpdatePetStatusRepositoryIntereface;
+use PetAdoption\domain\protocols\repositories\pet\DeleteAllPetsRepositoryIntereface;
+use PetAdoption\domain\protocols\repositories\pet\CreatePetsRepositoryIntereface;
+use PetAdoption\domain\protocols\repositories\pet\GetPetsRepositoryInterface;
 use PetAdoption\domain\usecases\SearchPetsUseCase\SearchPetsUseCaseInput;
 use PetAdoption\infra\databases\mysql\connection\MySQLConnectorSingleton;
+use PetAdoption\domain\protocols\entities\PetEntityType;
+use PetAdoption\domain\protocols\enums\PetStatusEnum;
+use PDO;
 
 class PetMySQLRepository implements
     CreatePetsRepositoryIntereface,
@@ -18,11 +18,15 @@ class PetMySQLRepository implements
     DeleteAllPetsRepositoryIntereface,
     GetPetsRepositoryInterface
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct()
+    public function __construct(PDO|null $pdo = null)
     {
-        $this->pdo = (MySQLConnectorSingleton::getInstance())->getPdo();
+        if ($pdo) {
+            $this->pdo = $pdo;
+        } else {
+            $this->pdo = (MySQLConnectorSingleton::getInstance())->getPdo();
+        }
     }
 
     public function createPets(array $pets): void
