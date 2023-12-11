@@ -2,23 +2,27 @@
 
 namespace PetAdoption\infra\databases\mysql\repositories;
 
-use PDO;
-use PetAdoption\domain\protocols\entities\UserEntityType;
-use PetAdoption\domain\protocols\repositories\user\CreateUserRepositoryInterface;
 use PetAdoption\domain\protocols\repositories\user\GetUserByEmailRepositoryInterface;
 use PetAdoption\domain\protocols\repositories\user\GetUserByIdRepositoryInterface;
+use PetAdoption\domain\protocols\repositories\user\CreateUserRepositoryInterface;
 use PetAdoption\infra\databases\mysql\connection\MySQLConnectorSingleton;
+use PetAdoption\domain\protocols\entities\UserEntityType;
+use PDO;
 
 class UserMySQLRepository implements
     CreateUserRepositoryInterface,
     GetUserByIdRepositoryInterface,
     GetUserByEmailRepositoryInterface
 {
-    private $pdo;
+    private PDO $pdo;
 
-    public function __construct()
+    public function __construct(PDO|null $pdo = null)
     {
-        $this->pdo = (MySQLConnectorSingleton::getInstance())->getPdo();
+        if ($pdo) {
+            $this->pdo = $pdo;
+        } else {
+            $this->pdo = (MySQLConnectorSingleton::getInstance())->getPdo();
+        }
     }
 
     public function create(UserEntityType $userEntity): UserEntityType
@@ -26,11 +30,10 @@ class UserMySQLRepository implements
         $sql = "INSERT INTO users (email, password, admin) VALUES (:email, :password, :admin)";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([
-        'email' => $userEntity->email,
-        'password' => $userEntity->password,
-        'admin' => $userEntity->admin,
+            'email' => $userEntity->email,
+            'password' => $userEntity->password,
+            'admin' => $userEntity->admin,
         ]);
-
         return $userEntity;
     }
 
@@ -39,9 +42,7 @@ class UserMySQLRepository implements
         $sql = "SELECT * FROM users WHERE email = :email";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['email' => $email]);
-
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
         return $user ? $user : null;
     }
 
@@ -50,9 +51,7 @@ class UserMySQLRepository implements
         $sql = "SELECT * FROM users WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute(['id' => $id]);
-
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
         return $user ? $user : null;
     }
 }
