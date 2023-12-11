@@ -2,9 +2,12 @@
 
 namespace PetAdoptionTest\utils;
 
-use Faker\Factory;
-use Faker\Generator;
 use PetAdoption\domain\protocols\entities\UserEntityType;
+use PetAdoption\domain\protocols\entities\PetEntityType;
+use PetAdoption\domain\protocols\enums\PetCategoryEnum;
+use PetAdoption\domain\protocols\enums\PetStatusEnum;
+use Faker\Generator;
+use Faker\Factory;
 
 class FakeData
 {
@@ -73,6 +76,20 @@ class FakeData
         $data->email = $this->email();
         $data->password = $this->password();
         $data->admin = $this->bool();
+        return $data;
+    }
+
+
+    public function petData(): PetEntityType
+    {
+        $data = new PetEntityType();
+        $data->id = $this->id();
+        $data->name = $this->word();
+        $data->description = $this->phrase();
+        $data->image = $this->word(100);
+        $data->createdAt = $this->date();
+        $data->category = PetCategoryEnum::CATS;
+        $data->status = PetStatusEnum::FREE;
         return $data;
     }
 }
