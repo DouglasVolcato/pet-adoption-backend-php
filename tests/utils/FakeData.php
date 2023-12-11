@@ -2,6 +2,7 @@
 
 namespace PetAdoptionTest\utils;
 
+use PetAdoption\domain\usecases\SearchPetsUseCase\SearchPetsUseCaseInput;
 use PetAdoption\domain\protocols\entities\UserEntityType;
 use PetAdoption\domain\protocols\entities\PetEntityType;
 use PetAdoption\domain\protocols\enums\PetCategoryEnum;
@@ -90,6 +91,34 @@ class FakeData
         $data->createdAt = $this->date();
         $data->category = PetCategoryEnum::CATS;
         $data->status = PetStatusEnum::FREE;
+        return $data;
+    }
+
+    public function petSearchParams($empty = false): SearchPetsUseCaseInput
+    {
+        $data = new SearchPetsUseCaseInput();
+        $data->limit = $this->numberInteger();
+        $data->offset = $this->numberInteger();
+        if (!$empty) {
+            if ($this->bool()) {
+                $data->term =  $this->word();
+            }
+            if ($this->bool()) {
+                $data->name = $this->word();
+            }
+            if ($this->bool()) {
+                $data->description = $this->phrase();
+            }
+            if ($this->bool()) {
+                $data->category = $this->word();
+            }
+            if ($this->bool()) {
+                $data->status = $this->word();
+            }
+            if ($this->bool()) {
+                $data->createdAt = $this->date();
+            }
+        }
         return $data;
     }
 }
