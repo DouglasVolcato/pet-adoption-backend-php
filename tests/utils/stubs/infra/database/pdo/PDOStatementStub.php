@@ -19,4 +19,14 @@ class PDOStatementStub extends PDOStatement
     ): mixed {
         return null;
     }
+
+    public function fetchAll($mode = PDO::FETCH_DEFAULT, ...$args): array
+    {
+        return [];
+    }
+
+    public function rowCount(): int
+    {
+        return 1;
+    }
 }

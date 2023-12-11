@@ -26,4 +26,9 @@ class PDOStub extends PDO
     ): PDOStatement|false {
         return new PDOStatementStub();
     }
+
+    public function exec(string $statement): int|false
+    {
+        return 1;
+    }
 }
