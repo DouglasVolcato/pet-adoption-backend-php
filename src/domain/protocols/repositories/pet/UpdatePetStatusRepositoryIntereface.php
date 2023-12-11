@@ -9,6 +9,6 @@ interface UpdatePetStatusRepositoryIntereface
 {
     public function updateStatus(
         string $petId,
-        PetStatusEnum $newStatus,
+        string $newStatus,
     ): PetEntityType | null;
 }
