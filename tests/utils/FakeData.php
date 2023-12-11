@@ -4,6 +4,7 @@ namespace PetAdoptionTest\utils;
 
 use Faker\Factory;
 use Faker\Generator;
+use PetAdoption\domain\protocols\entities\UserEntityType;
 
 class FakeData
 {
@@ -62,5 +63,16 @@ class FakeData
     public function date(): string
     {
         return $this->faker->date('Y-m-d');
+    }
+
+    public function userData(): UserEntityType
+    {
+        $data = new UserEntityType();
+        $data->id = $this->id();
+        $data->name = $this->word();
+        $data->email = $this->email();
+        $data->password = $this->password();
+        $data->admin = $this->bool();
+        return $data;
     }
 }

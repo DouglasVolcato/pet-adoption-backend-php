@@ -3,7 +3,8 @@
 namespace PetAdoptionTest\infra\databases\mysql\repositories;
 
 use PetAdoption\infra\databases\mysql\repositories\UserMySQLRepository;
-use PetAdoption\domain\protocols\entities\UserEntityType;
+use PetAdoptionTest\utils\stubs\infra\database\pdo\PDOStatementStub;
+use PetAdoptionTest\utils\stubs\infra\database\pdo\PDOStub;
 use PetAdoptionTest\utils\FakeData;
 use Mockery\LegacyMockInterface;
 use PHPUnit\Framework\TestCase;
@@ -11,58 +12,6 @@ use PDOStatement;
 use Exception;
 use Mockery;
 use PDO;
-
-function makeUserData(): UserEntityType
-{
-    $fakeData = FakeData::getInstance();
-    $data = new UserEntityType();
-    $data->id = $fakeData->id();
-    $data->name = $fakeData->word();
-    $data->email = $fakeData->email();
-    $data->password = $fakeData->password();
-    $data->admin = $fakeData->bool();
-    return $data;
-}
-
-class FakePDOStatement extends PDOStatement
-{
-    public function execute($params = []): bool
-    {
-        return true;
-    }
-
-    public function fetch(
-        int $mode = PDO::FETCH_DEFAULT,
-        int $cursorOrientation = PDO::FETCH_ORI_NEXT,
-        int $cursorOffset = 0
-    ): mixed {
-        return null;
-    }
-}
-
-class FakePDO extends PDO
-{
-    public function __construct()
-    {
-        $dsn = "mysql:host=" . getenv()['MYSQL_HOST']
-            . ";port=3306;dbname="
-            . getenv()['MYSQL_DATABASE'];
-        $user = getenv()['MYSQL_USER'];
-        $pass = getenv()['MYSQL_PASSWORD'];
-        parent::__construct($dsn, $user, $pass, [
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_SILENT,
-            PDO::ATTR_EMULATE_PREPARES => false,
-        ]);
-    }
-
-    public function prepare(
-        string $query,
-        array $options = []
-    ): PDOStatement|false {
-        return new FakePDOStatement();
-    }
-}
-
 
 class UserMySQLRepositoryTest extends TestCase
 {
@@ -74,8 +23,8 @@ class UserMySQLRepositoryTest extends TestCase
     protected function setUp(): void
     {
         $this->fakeData = FakeData::getInstance();
-        $this->pdoMock = Mockery::mock(FakePDO::class);
-        $this->pdoStatementMock = Mockery::mock(FakePDOStatement::class);
+        $this->pdoMock = Mockery::mock(PDOStub::class);
+        $this->pdoStatementMock = Mockery::mock(PDOStatementStub::class);
         $this->sut = new UserMySQLRepository($this->pdoMock);
     }
 
@@ -102,7 +51,7 @@ class UserMySQLRepositoryTest extends TestCase
         )->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')
             ->once()->andReturn(true);
-        $this->sut->create(makeUserData());
+        $this->sut->create($this->fakeData->userData());
     }
 
     /**
@@ -110,7 +59,7 @@ class UserMySQLRepositoryTest extends TestCase
      */
     public function testCreateShouldCallExecuteWithCorrectValues()
     {
-        $userData = makeUserData();
+        $userData = $this->fakeData->userData();
         $this->pdoMock->shouldReceive('prepare')->once()
             ->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')->once()->with(
@@ -131,7 +80,7 @@ class UserMySQLRepositoryTest extends TestCase
      */
     public function testCreateShouldReturnTheUserData()
     {
-        $userData = makeUserData();
+        $userData = $this->fakeData->userData();
         $this->pdoMock->shouldReceive('prepare')->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')->andReturn(true);
         $result = $this->sut->create($userData);
@@ -146,7 +95,7 @@ class UserMySQLRepositoryTest extends TestCase
         $this->pdoMock->shouldReceive('prepare')->andThrow(new Exception());
         $this->pdoStatementMock->shouldReceive('execute')->andReturn(true);
         $this->expectException(Exception::class);
-        $this->sut->create(makeUserData());
+        $this->sut->create($this->fakeData->userData());
     }
 
     /**
@@ -157,7 +106,7 @@ class UserMySQLRepositoryTest extends TestCase
         $this->pdoMock->shouldReceive('prepare')->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')->andThrow(new Exception());
         $this->expectException(Exception::class);
-        $this->sut->create(makeUserData());
+        $this->sut->create($this->fakeData->userData());
     }
 
     // *********************** getByEmail ************************** \\
@@ -227,7 +176,7 @@ class UserMySQLRepositoryTest extends TestCase
      */
     public function testGetByEmailShouldReturnTheFoundUser()
     {
-        $userData = makeUserData();
+        $userData = $this->fakeData->userData();
         $this->pdoMock->shouldReceive('prepare')
             ->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')
@@ -351,7 +300,7 @@ class UserMySQLRepositoryTest extends TestCase
      */
     public function testGetByIdShouldReturnTheFoundUser()
     {
-        $userData = makeUserData();
+        $userData = $this->fakeData->userData();
         $this->pdoMock->shouldReceive('prepare')
             ->andReturn($this->pdoStatementMock);
         $this->pdoStatementMock->shouldReceive('execute')
