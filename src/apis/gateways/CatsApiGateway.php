@@ -18,7 +18,7 @@ class CatsApiGateway implements GatewayInterface
     public function __construct(ClientGetRequestSenderInterface $clientGetRequestSender)
     {
         $this->url = "https://api.thecatapi.com/v1/images/search";
-        $this->headers = ['x-api-key' => $_ENV['CATS_API_TOKEN']];
+        $this->headers = ['x-api-key' => getenv()['CATS_API_TOKEN']];
         $this->clientGetRequestSender = $clientGetRequestSender;
         $this->page = 0;
     }

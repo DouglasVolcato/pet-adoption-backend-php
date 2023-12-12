@@ -24,7 +24,7 @@ class GetUserByTokenUserUseCase
     {
         $decryptedToken = $this->tokenDecrypter->decryptToken(
             $input->token,
-            $_ENV['SECRET']
+            getenv()['SECRET']
         );
         if (!$decryptedToken) {
             return new InvalidFieldError("token");

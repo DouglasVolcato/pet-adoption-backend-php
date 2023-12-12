@@ -18,7 +18,7 @@ class DogsApiGateway implements GatewayInterface
     public function __construct(ClientGetRequestSenderInterface $clientGetRequestSender)
     {
         $this->url = "https://api.thedogapi.com/v1/images/search";
-        $this->headers = ['x-api-key' => $_ENV['DOGS_API_TOKEN']];
+        $this->headers = ['x-api-key' => getenv()['DOGS_API_TOKEN']];
         $this->clientGetRequestSender = $clientGetRequestSender;
         $this->page = 0;
     }

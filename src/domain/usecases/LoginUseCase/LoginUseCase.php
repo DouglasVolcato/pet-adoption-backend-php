@@ -40,7 +40,7 @@ class LoginUseCase
         }
         $token = $this->tokenGenerator->generateToken(
             (object)['id' => $foundUser->id],
-            $_ENV['SECRET']
+            getenv()['SECRET']
         );
         return (object)['token' => $token, 'user' => $foundUser];
     }
