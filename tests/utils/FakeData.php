@@ -121,4 +121,17 @@ class FakeData
         }
         return $data;
     }
+
+    public function randomData(): object
+    {
+        return (object)[
+            $this->word() => $this->word(),
+            $this->word() => $this->numberInteger(),
+            $this->word() => $this->bool(),
+            $this->word() => $this->email(),
+            $this->word() => $this->password(),
+            $this->word() => $this->date(),
+            $this->word() => $this->phrase()
+        ];
+    }
 }
