@@ -26,24 +26,32 @@ class CatsApiGateway implements GatewayInterface
     public function request(): Generator
     {
         while ($this->page <= 1) {
-            $data = yield $this->clientGetRequestSender->get(
+            $data = $this->clientGetRequestSender->get(
                 "{$this->url}?limit=80&order=Asc&page={$this->page}",
                 $this->headers
             );
-
             $this->page++;
-
-            foreach ($data as $pet) {
-                yield [
-                    'id' => '',
-                    'createdAt' => '',
-                    'image' => $pet['url'],
-                    'name' => $pet['breeds'][0]['name'] ?? 'Cat',
-                    'description' => $pet['breeds'][0]['description'] ?? '',
-                    'category' => PetCategoryEnum::CATS,
-                    'status' => PetStatusEnum::FREE,
-                ];
-            }
+            yield array_map(function ($pet) { {
+                    $name = "Cat";
+                    $description = '';
+                    if (
+                        property_exists($pet, 'breeds')
+                        && array_key_exists(0, $pet->breeds)
+                    ) {
+                        $name = ($pet->breeds[0])->name;
+                        $description = ($pet->breeds[0])->description;
+                    }
+                    return (object)[
+                        'id' => '',
+                        'createdAt' => '',
+                        'image' => $pet->url,
+                        'name' => $name,
+                        'description' => $description,
+                        'category' => PetCategoryEnum::CATS,
+                        'status' => PetStatusEnum::FREE,
+                    ];
+                }
+            }, $data);
         }
     }
 }

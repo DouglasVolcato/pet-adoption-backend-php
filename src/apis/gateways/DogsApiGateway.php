@@ -26,24 +26,32 @@ class DogsApiGateway implements GatewayInterface
     public function request(): Generator
     {
         while ($this->page <= 1) {
-            $data = yield $this->clientGetRequestSender->get(
+            $data = $this->clientGetRequestSender->get(
                 "{$this->url}?limit=80&order=Asc&page={$this->page}",
                 $this->headers
             );
-
             $this->page++;
-
-            foreach ($data as $pet) {
-                  yield [
-                    'id' => '',
-                    'createdAt' => '',
-                    'image' => $pet['url'],
-                    'name' => $pet['breeds'][0]['name'] ?? 'Dog',
-                    'description' => $pet['breeds'][0]['description'] ?? '',
-                    'dogegory' => PetCategoryEnum::DOGS,
-                    'status' => PetStatusEnum::FREE,
-                  ];
-            }
+            yield array_map(function ($pet) { {
+                    $name = "Dog";
+                    $description = '';
+                    if (
+                        property_exists($pet, 'breeds')
+                        && array_key_exists(0, $pet->breeds)
+                    ) {
+                        $name = ($pet->breeds[0])->name;
+                        $description = ($pet->breeds[0])->description;
+                    }
+                    return (object)[
+                        'id' => '',
+                        'createdAt' => '',
+                        'image' => $pet->url,
+                        'name' => $name,
+                        'description' => $description,
+                        'category' => PetCategoryEnum::DOGS,
+                        'status' => PetStatusEnum::FREE,
+                    ];
+                }
+            }, $data);
         }
     }
 }

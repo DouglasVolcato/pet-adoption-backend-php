@@ -14,13 +14,13 @@ class GuzzleHttpAdapter implements ClientGetRequestSenderInterface
         $this->httpClient = new Client();
     }
 
-    public function get($url, $headers = []): object
+    public function get($url, $headers = []): object|array
     {
         $response = $this->httpClient->get($url, [
         'headers' => $headers,
         'http_errors' => false,
         ]);
 
-        return (object)json_decode($response->getBody(), true);
+        return json_decode($response->getBody());
     }
 }
